@@ -1,5 +1,13 @@
 #!/bin/bash
 
+## specify distributions to cache from environment variable DISTRIBUTIONS
+if [ -n "$DISTRIBUTIONS" ]; then
+	echo "Setting up apt-cacher for the following distributions: $DISTRIBUTIONS"
+	sed -i -r "s/^ubuntu_release_names = .+/ubuntu_release_names = $DISTRIBUTIONS/" /etc/apt-cacher/apt-cacher.conf
+fi
+
+
+## print usage documentation
 IP=$(awk "/$HOSTNAME/{print \$1}" /etc/hosts)
 DISTRIBUTIONS=$(sed -n 's/^ubuntu_release_names = //p' /etc/apt-cacher/apt-cacher.conf)
 
@@ -33,4 +41,6 @@ Then run that container with --link:
 	
 EOF
 
+
+## run the services
 cron && apt-cacher
